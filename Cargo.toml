@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "cncs-sm2-kit",
+]
+
