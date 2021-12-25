@@ -1,0 +1,22 @@
+[package]
+name = "cncs-sm2-php"
+version = "0.1.0"
+authors = ["vkill <vkill.net@gmail.com>"]
+edition = "2021"
+description = "Chinese National Cryptography Standard - SM2 PHP"
+license = "Apache-2.0 OR MIT"
+repository = "https://github.com/bk-rs/CNCS-rs"
+homepage = "https://github.com/bk-rs/CNCS-rs"
+documentation = "https://docs.rs/cncs-sm2-php"
+keywords = []
+categories = []
+readme = "README.md"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+cncs-sm2-kit = { version = "^0.1", default-features = false, path = "../cncs-sm2-kit" }
+
+ext-php-rs = { version = "0.7", default-features = false }
+base64 = {version = "0.13", default-features = false, features = ["std"] }
