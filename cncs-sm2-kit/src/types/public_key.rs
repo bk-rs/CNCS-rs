@@ -1,4 +1,4 @@
-use std::{error, fmt};
+use core::fmt;
 
 use num_bigint::{BigUint, ParseBigIntError};
 use num_traits::Num as _;
@@ -8,14 +8,17 @@ pub struct PublicKey {
     pub x: BigUint,
     pub y: BigUint,
 }
+impl fmt::Debug for PublicKey {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("PublicKey")
+            .field("x", &self.x.to_str_radix(16).to_uppercase())
+            .field("y", &self.y.to_str_radix(16).to_uppercase())
+            .finish()
+    }
+}
 impl fmt::Display for PublicKey {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "PublicKey(x: {} y: {})",
-            &self.x.to_str_radix(16).to_uppercase(),
-            &self.y.to_str_radix(16).to_uppercase()
-        )
+        write!(f, "{}", &self.to_concated_hex_str())
     }
 }
 
@@ -77,7 +80,7 @@ impl fmt::Display for PublicKeyFromConcatedHexStrError {
         write!(f, "{:?}", self)
     }
 }
-impl error::Error for PublicKeyFromConcatedHexStrError {}
+impl std::error::Error for PublicKeyFromConcatedHexStrError {}
 
 //
 //
@@ -169,5 +172,16 @@ mod tests {
             );
             assert_eq!(z.to_biguint(), BigUint::from_str_radix("1", 16).unwrap());
         }
+    }
+
+    #[test]
+    fn test_to_concated_hex_str() {
+        let public_key = PublicKey::from_hex_str(PUBLIC_KEY_X, PUBLIC_KEY_Y).unwrap();
+        println!("{:?}", public_key);
+        println!("{}", public_key);
+        assert_eq!(
+            public_key.to_concated_hex_str(),
+            format!("{}{}", PUBLIC_KEY_X, PUBLIC_KEY_Y)
+        )
     }
 }

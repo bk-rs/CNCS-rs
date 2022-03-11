@@ -1,7 +1,7 @@
 pub use gmsm;
 pub use libsm;
 
-use std::{error, fmt};
+use core::fmt;
 
 use gmsm::g2::subject::{
     decrypt as gmsm_decrypt, encrypt as gmsm_encrypt, PrivateKey as GmsmPrivateKey,
@@ -77,7 +77,7 @@ impl fmt::Display for VerifyError {
         write!(f, "{:?}", self)
     }
 }
-impl error::Error for VerifyError {}
+impl std::error::Error for VerifyError {}
 
 //
 //

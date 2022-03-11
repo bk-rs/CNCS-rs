@@ -1,4 +1,4 @@
-use std::{error, fmt};
+use core::fmt;
 
 use num_bigint::{BigUint, ParseBigIntError};
 use num_traits::Num as _;
@@ -70,7 +70,7 @@ impl fmt::Display for SignatureFromConcatedHexStrError {
         write!(f, "{:?}", self)
     }
 }
-impl error::Error for SignatureFromConcatedHexStrError {}
+impl std::error::Error for SignatureFromConcatedHexStrError {}
 
 //
 //

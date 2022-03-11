@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    "cncs-sm2-gen",
     "cncs-sm2-kit",
     "cncs-sm2-php",
 ]

@@ -1,4 +1,4 @@
-use std::fmt;
+use core::fmt;
 
 use num_bigint::{BigUint, ParseBigIntError};
 use num_traits::Num as _;
@@ -9,13 +9,16 @@ use crate::types::PublicKey;
 pub struct PrivateKey {
     pub d: BigUint,
 }
+impl fmt::Debug for PrivateKey {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("PrivateKey")
+            .field("d", &self.d.to_str_radix(16).to_uppercase())
+            .finish()
+    }
+}
 impl fmt::Display for PrivateKey {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "PrivateKey(d: {})",
-            &self.d.to_str_radix(16).to_uppercase()
-        )
+        write!(f, "{}", self.to_hex_str())
     }
 }
 
@@ -50,6 +53,10 @@ impl PrivateKey {
 
     pub fn public_key(&self) -> PublicKey {
         PublicKey::from(&gmsm::g2::subject::PrivateKey::from(self).public_key)
+    }
+
+    pub fn to_hex_str(&self) -> String {
+        self.d.to_str_radix(16).to_uppercase()
     }
 }
 
@@ -162,5 +169,13 @@ mod tests {
 
         assert_eq!(public_key.x, gmsm_private_key.public_key.x);
         assert_eq!(public_key.y, gmsm_private_key.public_key.y);
+    }
+
+    #[test]
+    fn test_to_hex_str() {
+        let private_key = PrivateKey::from_hex_str(PRIVATE_KEY).unwrap();
+        println!("{:?}", private_key);
+        println!("{}", private_key);
+        assert_eq!(private_key.to_hex_str(), PRIVATE_KEY)
     }
 }

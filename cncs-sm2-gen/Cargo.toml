@@ -1,0 +1,16 @@
+[package]
+name = "cncs-sm2-gen"
+version = "0.1.0"
+authors = ["vkill <vkill.net@gmail.com>"]
+edition = "2021"
+description = "Chinese National Cryptography Standard - SM2 Gen"
+license = "Apache-2.0 OR MIT"
+repository = "https://github.com/bk-rs/CNCS-rs"
+homepage = "https://github.com/bk-rs/CNCS-rs"
+documentation = "https://docs.rs/cncs-sm2-gen"
+keywords = []
+categories = []
+readme = "README.md"
+
+[dependencies]
+cncs-sm2-kit = { version = "^0.1", default-features = false, path = "../cncs-sm2-kit" }
