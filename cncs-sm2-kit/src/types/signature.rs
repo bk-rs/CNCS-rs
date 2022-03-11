@@ -8,14 +8,17 @@ pub struct Signature {
     pub r: BigUint,
     pub s: BigUint,
 }
+impl fmt::Debug for Signature {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Signature")
+            .field("r", &self.r.to_str_radix(16).to_uppercase())
+            .field("s", &self.s.to_str_radix(16).to_uppercase())
+            .finish()
+    }
+}
 impl fmt::Display for Signature {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "Signature(r: {} s: {})",
-            &self.r.to_str_radix(16).to_uppercase(),
-            &self.s.to_str_radix(16).to_uppercase()
-        )
+        write!(f, "{}", &self.to_concated_hex_str())
     }
 }
 
@@ -84,5 +87,23 @@ impl From<&Signature> for libsm::sm2::signature::Signature {
 impl From<&libsm::sm2::signature::Signature> for Signature {
     fn from(s: &libsm::sm2::signature::Signature) -> Self {
         Self::new(s.get_r().to_owned(), s.get_s().to_owned())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    use crate::{PUBLIC_KEY_X, PUBLIC_KEY_Y};
+
+    #[test]
+    fn test_to_concated_hex_str() {
+        let signature = Signature::from_hex_str(PUBLIC_KEY_X, PUBLIC_KEY_Y).unwrap();
+        println!("{:?}", signature);
+        println!("{}", signature);
+        assert_eq!(
+            signature.to_concated_hex_str(),
+            format!("{}{}", PUBLIC_KEY_X, PUBLIC_KEY_Y)
+        )
     }
 }
