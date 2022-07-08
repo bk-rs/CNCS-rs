@@ -55,18 +55,14 @@ impl PublicKey {
     }
 
     pub fn to_concated_bytes(&self) -> Vec<u8> {
-        let mut bytes = vec![];
-        bytes.extend_from_slice(&self.x.to_bytes_be()[..]);
-        bytes.extend_from_slice(&self.y.to_bytes_be()[..]);
+        let mut bytes = Vec::with_capacity(64);
+        bytes.extend(super::to_bytes::<32>(&self.x));
+        bytes.extend(super::to_bytes::<32>(&self.y));
         bytes
     }
 
     pub fn to_concated_hex_str(&self) -> String {
-        format!(
-            "{}{}",
-            &self.x.to_str_radix(16).to_uppercase(),
-            &self.y.to_str_radix(16).to_uppercase()
-        )
+        super::to_hex_str(&self.to_concated_bytes())
     }
 }
 
@@ -182,6 +178,10 @@ mod tests {
         assert_eq!(
             public_key.to_concated_hex_str(),
             format!("{}{}", PUBLIC_KEY_X, PUBLIC_KEY_Y)
-        )
+        );
+
+        const PUBLIC_KEY: &str = "0F9E448FEBF2C412AB30127BAC3ADDA97B4206274E668D6253C03E889EE73A56A4304567EE2ACFECEEB8BB7DC7ED0E928A2449BFA0606F0984B6CE704DBB81DA";
+        let public_key = PublicKey::from_concated_hex_str(PUBLIC_KEY).unwrap();
+        assert_eq!(public_key.to_concated_hex_str(), PUBLIC_KEY);
     }
 }

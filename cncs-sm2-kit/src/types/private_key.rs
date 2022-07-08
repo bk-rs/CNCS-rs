@@ -55,8 +55,12 @@ impl PrivateKey {
         PublicKey::from(&gmsm::g2::subject::PrivateKey::from(self).public_key)
     }
 
+    pub fn to_bytes(&self) -> Vec<u8> {
+        super::to_bytes::<32>(&self.d).to_vec()
+    }
+
     pub fn to_hex_str(&self) -> String {
-        self.d.to_str_radix(16).to_uppercase()
+        super::to_hex_str(&self.to_bytes())
     }
 }
 

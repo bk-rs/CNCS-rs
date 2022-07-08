@@ -48,18 +48,14 @@ impl Signature {
     }
 
     pub fn to_concated_bytes(&self) -> Vec<u8> {
-        let mut bytes = vec![];
-        bytes.extend_from_slice(&self.r.to_bytes_be()[..]);
-        bytes.extend_from_slice(&self.s.to_bytes_be()[..]);
+        let mut bytes = Vec::with_capacity(64);
+        bytes.extend(super::to_bytes::<32>(&self.r));
+        bytes.extend(super::to_bytes::<32>(&self.s));
         bytes
     }
 
     pub fn to_concated_hex_str(&self) -> String {
-        format!(
-            "{}{}",
-            &self.r.to_str_radix(16).to_uppercase(),
-            &self.s.to_str_radix(16).to_uppercase()
-        )
+        super::to_hex_str(&self.to_concated_bytes())
     }
 }
 
@@ -94,7 +90,7 @@ impl From<&libsm::sm2::signature::Signature> for Signature {
 mod tests {
     use super::*;
 
-    use crate::{PUBLIC_KEY_X, PUBLIC_KEY_Y};
+    use crate::{PrivateKey, PUBLIC_KEY_X, PUBLIC_KEY_Y};
 
     #[test]
     fn test_to_concated_hex_str() {
@@ -104,6 +100,24 @@ mod tests {
         assert_eq!(
             signature.to_concated_hex_str(),
             format!("{}{}", PUBLIC_KEY_X, PUBLIC_KEY_Y)
-        )
+        );
+
+        let sk = "EE198D2262508EDC3A96DA1C1BE646EAF24911B31A0749AC5E6BC31EF501A052";
+        let id = "ID12341234567890";
+        let data = [
+            22, 7, 7, 12, 15, 38, 0, 214, 2, 22, 7, 7, 12, 15, 38, 0, 0, 0, 125, 125, 0, 0, 0, 0,
+            15, 160, 15, 160, 0, 0, 0, 34, 32, 34, 32, 0, 0, 40, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 1, 22, 7, 7, 12, 15, 38, 0, 0, 0, 0, 0, 0, 84, 69, 83, 84, 49, 50, 51, 49, 50,
+            51, 52, 53, 54, 55, 56, 57, 48, 83, 67, 73, 78, 49, 50, 51, 52, 49, 50, 51, 52, 53, 54,
+            55, 56, 57, 48, 67, 86, 78, 49, 50, 51, 52, 53, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48,
+            73, 85, 80, 82, 49, 50, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54,
+            55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 4, 0, 0, 0, 1, 0, 0, 0, 2, 0,
+            0, 0, 3, 0, 0, 0, 4,
+        ];
+        let err_signature =  "29AA22C223E560C5C39870FC62ADB0C163BB26CF2D4DDA6B43C1C0C7E603E9715372B0F8E0257C1EFCF90C71C11FB7CE86EA271D76B6C70E02B6471446151C";
+        let sk = PrivateKey::from_hex_str(sk).unwrap();
+        let signature = crate::sign(&sk, data, Some(id));
+        assert_ne!(signature.to_concated_hex_str(), err_signature);
+        assert_eq!(signature.to_concated_bytes().len(), 64);
     }
 }
